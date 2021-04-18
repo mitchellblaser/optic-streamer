@@ -1,0 +1,3 @@
+/home/mblaser/repos/optic-streamer/build/CMakeFiles/rebuild_cache.dir
+/home/mblaser/repos/optic-streamer/build/CMakeFiles/edit_cache.dir
+/home/mblaser/repos/optic-streamer/build/CMakeFiles/optic.dir
