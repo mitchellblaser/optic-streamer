@@ -73,24 +73,21 @@ int main(int argc, char** argv) {
     socket.bind(endpoint);
     cout << endpoint << endl;
 
+    Mat frame;
+
     while (true) {
-        Mat frame;
         bool bSuccess = cap.read(frame);
 
         vector<uint8_t> buffer;
         stringstream ss;
         zmqpp::message m;
+        
         imencode(".jpg", frame, buffer, params);
-        // m << "Hello";
+        
         for (auto c : buffer) ss << c;
-
         m << ss.str();
-        socket.send(m);
 
-        if (bSuccess == false) {
-            cout << "Camera Disconnected." << endl;
-            break;
-        }
+        socket.send(m);
 
         if (showPrev) { imshow(win, frame); 
             if (waitKey(10) == 27) {
