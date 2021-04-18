@@ -24,22 +24,32 @@ int main(int argc, char** argv) {
     zmqpp::context context;
     zmqpp::socket_type type = zmqpp::socket_type::sub;
     zmqpp::socket socket(context, type);
+    socket.set(zmqpp::socket_option::receive_timeout, 1000);
     socket.subscribe("");
     socket.connect(endpoint);
 
     string win = "OpticStream Viewer";
-    namedWindow(win);
+    namedWindow(win, WINDOW_NORMAL);
+    resizeWindow(win, stoi(argv[3]), stoi(argv[4]));
+
+    cv::Mat ncFrame;
+    ncFrame = imread("testimage.jpg");
 
     while (true) {
         string buffer;
-        socket.receive(buffer);
+        cv::Mat frame;
+
+        if (socket.receive(buffer) == 1) {    
+            vector<uint8_t> data(buffer.begin(), buffer.end());
+
+            frame = cv::Mat(data, true);
+            frame = imdecode(frame, cv::IMREAD_COLOR);
+            imshow(win, frame);
+        }
+        else {
+            imshow(win, ncFrame);
+        }
         
-        vector<uint8_t> data(buffer.begin(), buffer.end());
-
-        cv::Mat frame(data, true);
-        frame = imdecode(frame, cv::IMREAD_COLOR);
-
-        imshow(win, frame);
         if (waitKey(10) == 27) {
             cout << "ESC Pressed. Quitting." << endl;
             break;

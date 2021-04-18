@@ -5,9 +5,10 @@
 # Resolution Options
 TARGET_WIDTH=640
 TARGET_HEIGHT=480
+TARGET_FPS=30
 # Quality Options (1-100)
 COMPRESSION_LEVEL=30
 # Stream Options
 STREAM_ENDPOINT=tcp://*:8080
 # Preview Options
-SHOW_PREVIEW=True
+SHOW_PREVIEW=False

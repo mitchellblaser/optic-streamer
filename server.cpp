@@ -21,6 +21,7 @@ int main(int argc, char** argv) {
     // DEFAULT VALUES //
     double width = cap.get(CAP_PROP_FRAME_WIDTH);
     double height = cap.get(CAP_PROP_FRAME_HEIGHT);
+    int fpstarget = 30;
     bool showPrev = false;
     string endpoint = "tcp://*:8080";
     int compression = 85;
@@ -38,6 +39,7 @@ int main(int argc, char** argv) {
             else if (key == "SHOW_PREVIEW") { showPrev = (val == "True"); }
             else if (key == "STREAM_ENDPOINT") { endpoint = val; }
             else if (key == "COMPRESSION_LEVEL") { compression = stoi(val); }
+            else if (key == "TARGET_FPS") { fpstarget = stoi(val); }
 
         }
     }
@@ -49,6 +51,7 @@ int main(int argc, char** argv) {
 
     cap.set(CAP_PROP_FRAME_WIDTH, width);
     cap.set(CAP_PROP_FRAME_HEIGHT, height);
+    cap.set(CAP_PROP_FPS, fpstarget);
 
     string win = "OpticStream";
     namedWindow(win);
