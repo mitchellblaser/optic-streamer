@@ -22,7 +22,8 @@ int main(int argc, char** argv) {
     double width = cap.get(CAP_PROP_FRAME_WIDTH);
     double height = cap.get(CAP_PROP_FRAME_HEIGHT);
     bool showPrev = false;
-    string endpoint = "tcp://*:5584";
+    string endpoint = "tcp://*:8080";
+    int compression = 85;
     ////////////////////
 
     string line;
@@ -36,6 +37,7 @@ int main(int argc, char** argv) {
             else if (key == "TARGET_HEIGHT") { height = stoi(val); }
             else if (key == "SHOW_PREVIEW") { showPrev = (val == "True"); }
             else if (key == "STREAM_ENDPOINT") { endpoint = val; }
+            else if (key == "COMPRESSION_LEVEL") { compression = stoi(val); }
 
         }
     }
@@ -51,10 +53,22 @@ int main(int argc, char** argv) {
     string win = "OpticStream";
     namedWindow(win);
 
+    vector<int> params;
+        params.resize(9, 0);
+        params[0] = IMWRITE_JPEG_QUALITY;
+        params[1] = compression;
+        params[2] = IMWRITE_JPEG_PROGRESSIVE;
+        params[3] = 0;
+        params[4] = IMWRITE_JPEG_OPTIMIZE;
+        params[5] = 1;
+        params[6] = IMWRITE_JPEG_RST_INTERVAL;
+        params[7] = 0;
+
     zmqpp::context context;
     zmqpp::socket_type type = zmqpp::socket_type::pub;
     zmqpp::socket socket(context, type);
     socket.bind(endpoint);
+    cout << endpoint << endl;
 
     while (true) {
         Mat frame;
@@ -63,7 +77,7 @@ int main(int argc, char** argv) {
         vector<uint8_t> buffer;
         stringstream ss;
         zmqpp::message m;
-        imencode(".jpg", frame, buffer);
+        imencode(".jpg", frame, buffer, params);
         // m << "Hello";
         for (auto c : buffer) ss << c;
 
