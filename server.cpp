@@ -5,13 +5,14 @@ github.com/mitchellblaser
 */
 
 #include <opencv2/opencv.hpp>
+#include <zmqpp/zmqpp.hpp>
 #include <fstream>
 
 using namespace std;
 using namespace cv;
 
 int main(int argc, char** argv) {
-    
+    cout << "OpticStreamer" << endl << "Press ESC to exit GUI, Ctrl+C for cmdline." << endl;
     cout << "Loading Config from " << argv[1] << "." << endl;
     fstream confFile(argv[1]);
     
@@ -21,6 +22,7 @@ int main(int argc, char** argv) {
     double width = cap.get(CAP_PROP_FRAME_WIDTH);
     double height = cap.get(CAP_PROP_FRAME_HEIGHT);
     bool showPrev = false;
+    string endpoint = "tcp://*:5584";
     ////////////////////
 
     string line;
@@ -33,6 +35,7 @@ int main(int argc, char** argv) {
             if (key == "TARGET_WIDTH") { width = stoi(val); }
             else if (key == "TARGET_HEIGHT") { height = stoi(val); }
             else if (key == "SHOW_PREVIEW") { showPrev = (val == "True"); }
+            else if (key == "STREAM_ENDPOINT") { endpoint = val; }
 
         }
     }
@@ -48,9 +51,24 @@ int main(int argc, char** argv) {
     string win = "OpticStream";
     namedWindow(win);
 
+    zmqpp::context context;
+    zmqpp::socket_type type = zmqpp::socket_type::pub;
+    zmqpp::socket socket(context, type);
+    socket.bind(endpoint);
+
     while (true) {
         Mat frame;
         bool bSuccess = cap.read(frame);
+
+        vector<uint8_t> buffer;
+        stringstream ss;
+        zmqpp::message m;
+        imencode(".jpg", frame, buffer);
+        // m << "Hello";
+        for (auto c : buffer) ss << c;
+
+        m << ss.str();
+        socket.send(m);
 
         if (bSuccess == false) {
             cout << "Camera Disconnected." << endl;
@@ -59,12 +77,13 @@ int main(int argc, char** argv) {
 
         if (showPrev) { imshow(win, frame); 
             if (waitKey(10) == 27) {
-            cout << "ESC Pressed. Quitting." << endl;
-            break;
-        }
+                cout << "ESC Pressed. Quitting." << endl;
+                break;
+            }
         }
 
     }
 
+    // socket.close();
     return 0;
 }

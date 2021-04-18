@@ -1,10 +1,24 @@
 cmake_minimum_required(VERSION 3.10)
 project(optic)
+project(optic-viewer)
 
-find_package( OpenCV REQUIRED )
+set(THREADS_PREFER_PTHREAD_FLAG ON)
 
-add_executable(optic main.cpp)
+SET(CMAKE_FIND_LIBRARY_PREFIXES lib)
+SET(CMAKE_FIND_LIBRARY_SUFFIXES a)
+
+find_package(Threads REQUIRED)
+find_package(OpenCV REQUIRED)
+
+add_executable(optic server.cpp)
+add_executable(optic-viewer client.cpp)
+
 target_include_directories(optic PUBLIC
                           "${PROJECT_BINARY_DIR}"
                           )
-target_link_libraries(optic ${OpenCV_LIBS})
+target_include_directories(optic-viewer PUBLIC
+                          "${PROJECT_BINARY_DIR}"
+                          )
+
+target_link_libraries(optic ${OpenCV_LIBS} libzmq.a libzmqpp.a libsodium.a Threads::Threads)
+target_link_libraries(optic-viewer ${OpenCV_LIBS} libzmq.a libzmqpp.a libsodium.a Threads::Threads)
