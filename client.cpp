@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
     cv::Mat ncFrame;
     ncFrame = imread("testimage.jpg");
     putText(ncFrame, "Link DOWN. FPS:"+to_string(0)+" FRC:"+to_string(0), Point(10, 25), FONT_HERSHEY_DUPLEX, 
-    0.6, Scalar(200, 200, 250), 1, 8);
+    0.001388889*ncFrame.cols, Scalar(200, 200, 250), 1, 8);
 
     int FrameCounter = 0;
     int FPS[3] = {0, 0, 0};
@@ -66,7 +66,7 @@ int main(int argc, char** argv) {
             frame = imdecode(frame, cv::IMREAD_COLOR);
 
             putText(frame, "Link UP. FPS:"+to_string(AvgFPS)+" FRC:"+to_string(FrameCounter), Point(10, 25), FONT_HERSHEY_DUPLEX, 
-            0.6, Scalar(200, 200, 250), 1, 8);
+            0.001388889*frame.cols, Scalar(200, 200, 250), 1, 8);
 
             imshow(win, frame);
             FrameCounter++;
