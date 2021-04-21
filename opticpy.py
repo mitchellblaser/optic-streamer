@@ -36,6 +36,7 @@ cv2.namedWindow("OpticStreamer PyClient", cv2.WINDOW_NORMAL)
 def GetImage():
     try:
         global img
+        global data
         data = socket.recv()
         d = numpy.frombuffer(data, dtype=numpy.byte)
         img = cv2.imdecode(d, 1)
@@ -52,9 +53,10 @@ img_res = img.shape
 resx=img_res[1]*winScale
 resy=img_res[0]*winScale
 cv2.resizeWindow("OpticStreamer PyClient", round(resx), round(resy))
-
 print("Stream Resolution: " + str(img_res[1]) + "x" + str(img_res[0]) + "px.")
-
+# f = open("test.jpg", "wb")
+# f.write(data)
+# f.close()
 UpdateCounter = 0
 FPSCount = [0, 0, 0]
 Timer = 0

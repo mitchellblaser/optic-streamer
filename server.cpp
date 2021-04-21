@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
     cout << "Loading Config from " << argv[1] << "." << endl;
     fstream confFile(argv[1]);
     
-    VideoCapture cap(0);
+    VideoCapture cap(1);
     
     // DEFAULT VALUES //
     double width = cap.get(CAP_PROP_FRAME_WIDTH);
@@ -74,6 +74,8 @@ int main(int argc, char** argv) {
     cout << endpoint << endl;
 
     Mat frame;
+    Mat rsframe;
+    Size rsSize(width, height);
 
     while (true) {
         bool bSuccess = cap.read(frame);
@@ -81,15 +83,16 @@ int main(int argc, char** argv) {
         vector<uint8_t> buffer;
         stringstream ss;
         zmqpp::message m;
-        
-        imencode(".jpg", frame, buffer, params);
+
+        resize(frame, rsframe, rsSize);
+        imencode(".jpg", rsframe, buffer, params);
         
         for (auto c : buffer) ss << c;
         m << ss.str();
 
         socket.send(m);
 
-        if (showPrev) { imshow(win, frame); 
+        if (showPrev) { imshow(win, rsframe); 
             if (waitKey(10) == 27) {
                 cout << "ESC Pressed. Quitting." << endl;
                 break;
