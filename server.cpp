@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
     cout << "Loading Config from " << argv[1] << "." << endl;
     fstream confFile(argv[1]);
     
-    VideoCapture cap(1);
+    VideoCapture cap(0);
     
     // DEFAULT VALUES //
     double width = cap.get(CAP_PROP_FRAME_WIDTH);
