@@ -12,7 +12,7 @@ msg = """   ___       _   _    ___ _
        """
 
 if len(sys.argv) < 2:
-    addr = "10.10.10.182"
+    addr = "localhost"
     port = 8080
     winScale = 1.5
     statInterval = 10
