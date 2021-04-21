@@ -15,10 +15,10 @@ int main(int argc, char** argv) {
     cout << "OpticStreamer" << endl << "Press ESC to exit GUI, Ctrl+C for cmdline." << endl;
     cout << "Loading Config from " << argv[1] << "." << endl;
     fstream confFile(argv[1]);
-    
-    VideoCapture cap(0);
-    
+        
     // DEFAULT VALUES //
+    VideoCapture cap;
+    int capturedev = 0;
     double width = cap.get(CAP_PROP_FRAME_WIDTH);
     double height = cap.get(CAP_PROP_FRAME_HEIGHT);
     int fpstarget = 30;
@@ -40,9 +40,12 @@ int main(int argc, char** argv) {
             else if (key == "STREAM_ENDPOINT") { endpoint = val; }
             else if (key == "COMPRESSION_LEVEL") { compression = stoi(val); }
             else if (key == "TARGET_FPS") { fpstarget = stoi(val); }
+            else if (key == "CAPTURE_DEVICE") { capturedev = stoi(val); }
 
         }
     }
+    
+    cap = cap = VideoCapture(capturedev);
 
     if (cap.isOpened() == false) {
         cout << "Error Opening Camera." << endl;
@@ -71,7 +74,7 @@ int main(int argc, char** argv) {
     zmqpp::socket_type type = zmqpp::socket_type::pub;
     zmqpp::socket socket(context, type);
     socket.bind(endpoint);
-    cout << endpoint << endl;
+    cout << "Starting Socket on " << endpoint << "." << endl;
 
     Mat frame;
     Mat rsframe;

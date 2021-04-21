@@ -2,6 +2,8 @@
 # OPTIC STREAMER           #
 # Configuration File       #
 ############################
+# Camera Input Selection
+CAPTURE_DEVICE=0
 # Resolution Options
 TARGET_WIDTH=426
 TARGET_HEIGHT=240
