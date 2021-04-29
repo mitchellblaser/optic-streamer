@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
     cout << "OpticStreamer" << endl << "Press ESC to exit GUI, Ctrl+C for cmdline." << endl;
     cout << "Loading Config from " << argv[1] << "." << endl;
     fstream confFile(argv[1]);
-        
+
     // DEFAULT VALUES //
     VideoCapture cap;
     int capturedev = 0;
@@ -23,9 +23,12 @@ int main(int argc, char** argv) {
     double height = cap.get(CAP_PROP_FRAME_HEIGHT);
     int fpstarget = 30;
     bool showPrev = false;
-    string endpoint = "tcp://*:8080";
+    string endpoint = "tcp://*:5801";
     int compression = 85;
     ////////////////////
+
+    double temp_width = 0;
+    double temp_height = 0;
 
     string line;
     while (getline(confFile, line)) {
@@ -44,7 +47,7 @@ int main(int argc, char** argv) {
 
         }
     }
-    
+
     cap = cap = VideoCapture(capturedev);
 
     if (cap.isOpened() == false) {
@@ -87,15 +90,22 @@ int main(int argc, char** argv) {
         stringstream ss;
         zmqpp::message m;
 
-        resize(frame, rsframe, rsSize);
-        imencode(".jpg", rsframe, buffer, params);
+        cap.get(CAP_PROP_FRAME_WIDTH, temp_width);
+        cap.get(CAP_PROP_FRAME_HEIGHT, temp_height);
+
+        if (temp_width != width && temp_height != height) {
+            resize(frame, rsframe, rsSize);
+            imencode(".jpg", rsframe, buffer, params);
+        } else {
+            imencode(".jpg", frame, buffer, params);
+        }
         
         for (auto c : buffer) ss << c;
         m << ss.str();
 
         socket.send(m);
 
-        if (showPrev) { imshow(win, rsframe); 
+        if (showPrev) { imshow(win, rsframe);
             if (waitKey(10) == 27) {
                 cout << "ESC Pressed. Quitting." << endl;
                 break;
