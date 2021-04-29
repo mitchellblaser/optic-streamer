@@ -90,8 +90,8 @@ int main(int argc, char** argv) {
         stringstream ss;
         zmqpp::message m;
 
-        cap.get(CAP_PROP_FRAME_WIDTH, temp_width);
-        cap.get(CAP_PROP_FRAME_HEIGHT, temp_height);
+        temp_width = cap.get(CAP_PROP_FRAME_WIDTH);
+        temp_height = cap.get(CAP_PROP_FRAME_HEIGHT);
 
         if (temp_width != width && temp_height != height) {
             resize(frame, rsframe, rsSize);
