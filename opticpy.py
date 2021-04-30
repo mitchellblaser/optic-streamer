@@ -44,10 +44,17 @@ def GetImage():
     except:
         return False
 
+def ExitCheck():
+    if cv2.waitKey(1) == 27:
+        exit()
+
+ncimg = cv2.imdecode(numpy.frombuffer(b'0', dtype=numpy.byte), 1)
+
 print("Waiting for Server...")
 while True:
     if GetImage() == True:
         break
+    ExitCheck()
 print("Connection Found.")
 img_res = img.shape
 resx=img_res[1]*winScale
@@ -78,8 +85,10 @@ while True:
                 print("FPS: " + str((FPSCount[0]+FPSCount[1]+FPSCount[2])/3), end='')
                 Timer = 0
         cv2.imshow("OpticStreamer PyClient", img)
-        if cv2.waitKey(1) == 27:
-            break
+        ExitCheck()
         UpdateCounter = UpdateCounter+1
+    else:
+        cv2.imshow("OpticStreamer PyClient", ncimg)
+        ExitCheck()
 
 cv2.destroyAllWindows()
